@@ -1,7 +1,7 @@
 # TaskTimer
 _A basic cli program to track tasks in to-do list fanshion_
 
-##TODO
+## TODO
  _v1_
 - [x] Start Project
 - [x] Main menu
