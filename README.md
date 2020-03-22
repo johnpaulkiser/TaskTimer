@@ -8,8 +8,7 @@ _A basic cli program to track tasks in to-do list fanshion_
 - [x] Task creation
 - [ ] Task running
     - [ ] On completion sound/popup
-- [ ] Task browser menu
-- [ ] Task selection from menu
+- [x] Task browser menu
 - [ ] Start random task
 - [ ] Save tasklist to file
 
