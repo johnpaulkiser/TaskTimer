@@ -6,10 +6,10 @@ _A basic cli pomodoro technique task tracker_
 - [x] Start Project
 - [x] Main menu
 - [x] Task creation
-- [ ] Task running
+- [x] Task running
     - [ ] On completion sound/popup
 - [x] Task browser menu
-- [ ] Start random task
+- [x] Start random task
 - [ ] Save tasklist to file
 
 ---------

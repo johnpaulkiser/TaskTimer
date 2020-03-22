@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 //Task represents a task by name and length (minutes)
@@ -16,7 +18,11 @@ type Task struct {
 
 //toString for Task
 func (t Task) String() string {
-	return fmt.Sprintf("%s for %d minutes", t.name, t.minutes)
+	minOrMins := "minutes"
+	if t.minutes == 1 {
+		minOrMins = "minute"
+	}
+	return fmt.Sprintf("%s for %d %s", t.name, t.minutes, minOrMins)
 }
 
 func main() {
@@ -37,7 +43,12 @@ func main() {
 				printHomeScreen("Created Task: " + taskList[len(taskList)-1].String()) // -> calls String()
 			case 2:
 				browseTasks(taskList)
-
+			case 3:
+				startTask(taskList, rand.Intn(len(taskList))) //do random task
+			case 4:
+				clearTerm()
+				fmt.Println("Bye!")
+				return
 			}
 
 		} else {
@@ -111,29 +122,45 @@ func browseTasks(taskList []Task) {
 	}
 	clearTerm()
 
-	// task selection menu
-	for {
-		//print tasks
+	for { // task selection menu
+
 		for i, err := range taskList {
-			fmt.Println(i+1, ".", err)
+			fmt.Printf("%d. %s\n", i+1, err) //print tasks
 		}
-		fmt.Println(len(taskList)+1, ". Cancel")
+		fmt.Printf("%d. Cancel\n", len(taskList)+1) //print cancel option
 
-		//get selection
-		_, err := fmt.Scan(&selection)
+		_, err := fmt.Scan(&selection) //get selection
 
-		//check if user cancels selection
-		if err == nil && selection == len(taskList)+1 {
-			return
-		}
-		if err == nil && selection < len(taskList) && selection > 0 {
-			// startTask(taskList, selection-1)
-			return
-		} else {
+		if err == nil && selection == len(taskList)+1 { //check if user cancels selection
 			clearTerm()
-			fmt.Println("User Input Error: Enter number corresponding to task")
+			printHomeScreen()
+			return
 		}
+		if err == nil && selection <= len(taskList) && selection > 0 {
+			startTask(taskList, selection-1)
+			return
+		}
+		clearTerm()
+		fmt.Println("User Input Error: Enter number corresponding to task")
 
 	}
 
+}
+
+func startTask(taskList []Task, selected int) {
+	task := taskList[selected]
+	timer := time.NewTimer(time.Duration(task.minutes) * time.Minute)
+
+	clearTerm()
+	fmt.Println("Started task", task)
+	<-timer.C
+	fmt.Println("Finished Task:", task)
+	cont()
+	clearTerm()
+	printHomeScreen()
+}
+
+func cont() {
+	fmt.Print("\nPress 'Enter' to go to main menu...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
