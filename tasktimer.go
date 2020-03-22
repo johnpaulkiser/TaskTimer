@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 //Task represents a task by name and length (minutes)
@@ -15,7 +16,7 @@ type Task struct {
 
 //toString for Task
 func (t Task) String() string {
-	return fmt.Sprintf("%sfor %d minutes", t.name, t.minutes)
+	return fmt.Sprintf("%s for %d minutes", t.name, t.minutes)
 }
 
 func main() {
@@ -34,10 +35,9 @@ func main() {
 			case 1:
 				taskList = createTask(taskList)
 				printHomeScreen("Created Task: " + taskList[len(taskList)-1].String()) // -> calls String()
-				// case 2:
-				// 	browseTasks(taskList)
-				// case 3:
-				// 	randTask(taskList)
+			case 2:
+				browseTasks(taskList)
+
 			}
 
 		} else {
@@ -63,8 +63,8 @@ func printHomeScreen(errs ...string) {
 
 	fmt.Println("Make Selection:")
 	fmt.Println("1. Create new task")
-	fmt.Println("2. Start random task")
-	fmt.Println("3. Browse tasks")
+	fmt.Println("2. Browse tasks")
+	fmt.Println("3. Start random task")
 	fmt.Println("4. Quit")
 
 }
@@ -83,6 +83,7 @@ func createTask(taskList []Task) []Task {
 	fmt.Println("Enter task name:")
 	reader := bufio.NewReader(os.Stdin)
 	name, _ := reader.ReadString('\n')
+	name = strings.TrimSuffix(name, "\n")
 
 	//loop until user input is correct
 	for {
@@ -97,7 +98,42 @@ func createTask(taskList []Task) []Task {
 		fmt.Println("User Input Error:")
 		fmt.Println(mins)
 	}
-
 	return append(taskList, Task{name, mins})
+}
+
+func browseTasks(taskList []Task) {
+
+	var selection int
+
+	if len(taskList) == 0 {
+		printHomeScreen("There are no tasks queued create one first.")
+		return
+	}
+	clearTerm()
+
+	// task selection menu
+	for {
+		//print tasks
+		for i, err := range taskList {
+			fmt.Println(i+1, ".", err)
+		}
+		fmt.Println(len(taskList)+1, ". Cancel")
+
+		//get selection
+		_, err := fmt.Scan(&selection)
+
+		//check if user cancels selection
+		if err == nil && selection == len(taskList)+1 {
+			return
+		}
+		if err == nil && selection < len(taskList) && selection > 0 {
+			// startTask(taskList, selection-1)
+			return
+		} else {
+			clearTerm()
+			fmt.Println("User Input Error: Enter number corresponding to task")
+		}
+
+	}
 
 }
