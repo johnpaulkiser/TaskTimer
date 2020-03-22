@@ -1,5 +1,5 @@
 # TaskTimer
-_A basic cli program to track tasks in to-do list fanshion_
+_A basic cli pomodoro technique task tracker_
 
 ## TODO
  _v1_
