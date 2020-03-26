@@ -1,6 +1,10 @@
 # TaskTimer
 _A basic cli pomodoro technique task tracker_
 
+* project purpose: _Dummy project to help learn Go_
+
+* Who is it for: _No one just use the many free productivity trackers online_  
+
 ## TODO
  _v1_
 - [x] Start Project
