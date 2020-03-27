@@ -2,30 +2,38 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
 
-//Task represents a task by name and length (minutes)
+// Task represents a task by name and length (minutes)
 type Task struct {
 	name    string
 	minutes int
 }
 
-//TaskList represents a list of Task structs
+// TaskList represents a list of Task structs
 type TaskList []Task
 
-//toString for Task
+// toString for Task
 func (t Task) String() string {
 	minOrMins := "minutes"
 	if t.minutes == 1 {
 		minOrMins = "minute"
 	}
 	return fmt.Sprintf("%s for %d %s", t.name, t.minutes, minOrMins)
+}
+
+// ToCSV returns the csv line representation of a Task -> "chem,45\n"
+func (t Task) ToCSV() []string {
+	return []string{t.name, strconv.Itoa(t.minutes)}
 }
 
 func (tL *TaskList) createTask() {
@@ -110,9 +118,8 @@ func (tL TaskList) removeTask(toRemove int) TaskList {
 func main() {
 
 	var selection int
-
-	taskList := make(TaskList, 0)
-
+	filename := "tasks.csv"
+	taskList := readTaskFromFile(filename)
 	printHomeScreen() //prompt inital selection screen
 
 	for {
@@ -130,6 +137,7 @@ func main() {
 			case 4:
 				clearTerm()
 				fmt.Println("Bye!")
+				dumpTasksToFile(filename, taskList)
 				return
 			}
 
@@ -138,11 +146,64 @@ func main() {
 		}
 
 	}
+}
+
+func readTaskFromFile(filename string) TaskList {
+	// file format: taskName,numMinutes\n
+
+	list := make(TaskList, 0)
+	csvfile, err := os.Open(filename)
+
+	if err != nil {
+		fmt.Println("No tasks found. Initializing empty task list.")
+		return list
+	}
+
+	data := csv.NewReader(csvfile)
+
+	for {
+		// Read each record from csv
+		record, err := data.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			fmt.Println("Your tasks.csv file has been corrupted", err)
+			break
+		}
+		mins, err := strconv.Atoi(record[1])
+		if err != nil {
+			fmt.Println("Your tasks.csv file has been corrupted", err)
+			break
+		}
+		list = append(list, Task{record[0], mins})
+	}
+	return list
+}
+
+func dumpTasksToFile(filename string, list TaskList) {
+	csvfile, err := os.Create(filename)
+
+	if err != nil {
+		fmt.Printf("Could not create file: %s\n", err)
+	}
+
+	writer := csv.NewWriter(csvfile)
+
+	for _, task := range list {
+		fmt.Println(task.ToCSV())
+		err = writer.Write(task.ToCSV())
+		if err != nil {
+			fmt.Println(err)
+		}
+
+	}
+	writer.Flush()
+	csvfile.Close()
 
 }
 
 func printHomeScreen(errs ...string) {
-	//TODO
 
 	clearTerm()
 

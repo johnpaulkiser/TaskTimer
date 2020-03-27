@@ -11,15 +11,16 @@ _A basic cli pomodoro technique task tracker_
 - [x] Main menu
 - [x] Task creation
 - [x] Task running
-    - [ ] On completion sound/popup
 - [x] Task browser menu
 - [x] Start random task
-- [ ] Save tasklist to file
+- [x] Save tasklist to file
 
 ---------
 
 _v2_
 - [ ] Deamon mode
 - [ ] Task history -> date completed
+- [ ] Delete tasks
+- [ ] Support all OS'
     
 
